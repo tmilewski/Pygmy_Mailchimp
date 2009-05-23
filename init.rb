@@ -1,0 +1,1 @@
+require 'pygmy_mailchimp'

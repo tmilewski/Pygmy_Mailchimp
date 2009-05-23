@@ -1,0 +1,48 @@
+PygmyMailchimp
+==============
+
+A very simple plugin to interact with basic functions of the MailChimp API
+
+
+Example
+=======
+
+After installation update the settings in config/pygmy_mailchimp.yml
+
+To get your default list id (optional):
+	
+	Use script/console
+		@pm = Pygmy_Mailchimp.new
+		@pm.find_list_id('LIST_NAME')
+
+Note: you may override your default list at any time by calling find_list_id() in your script
+
+Possible Usage:
+
+	after_create :create_mailchimp_entry
+	after_update :update_mailchimp_entry
+
+	protected
+	
+	def create_mailchimp_entry
+		if mailing_list_opt_in # Add MailChimp Entry
+			@pm = Pygmy_Mailchimp.new
+			@pm.subscribe(email)
+		end
+	end
+
+	def update_mailchimp_entry
+		if mailing_list_opt_in_changed? or email_changed?
+			@pm = Pygmy_Mailchimp.new
+			if mailing_list_opt_in_changed? and mailing_list_opt_in # Add MailChimp Entry
+				@pm.subscribe(email)
+			elsif mailing_list_opt_in_changed? and !mailing_list_opt_in # Remove MailChimp Entry
+				@pm.unsubscribe(email_was)
+			elsif email_changed? # Update Email
+				@pm.update(email_was, {:EMAIL => email})
+			end
+		end
+	end
+		
+
+Copyright (c) 2009 Tom Milewski [http://tommilewski.net], released under the MIT license
